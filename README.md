@@ -1,6 +1,6 @@
 # AI-Generated Resume Website Template: A Complete Beginner's Guide
 
-This comprehensive guide will walk you through creating your own AI-generated resume website using Next.js, React, and Supabase, from setting up your development environment to deploying your website and customizing its content.
+This comprehensive guide will walk you through creating your own AI-generated resume website using Next.js, React, and Supabase, from setting up your development environment to deploying your website, customizing its content, and linking it to your own domain.
 
 ## Table of Contents
 
@@ -14,9 +14,10 @@ This comprehensive guide will walk you through creating your own AI-generated re
 8. [Testing Your Website Locally](#testing-your-website-locally)
 9. [Pushing Your Code to GitHub](#pushing-your-code-to-github)
 10. [Deploying to Vercel](#deploying-to-vercel)
-11. [Further Customizing Your Website](#further-customizing-your-website)
-12. [Changing Your Profile Picture](#changing-your-profile-picture)
-13. [Troubleshooting](#troubleshooting)
+11. [Linking Your Vercel Deployment to Your Domain](#linking-your-vercel-deployment-to-your-domain)
+12. [Further Customizing Your Website](#further-customizing-your-website)
+13. [Changing Your Profile Picture](#changing-your-profile-picture)
+14. [Troubleshooting](#troubleshooting)
 
 ## Prerequisites
 
@@ -24,6 +25,8 @@ Before you begin, you'll need:
 
 - A computer with internet access
 - Basic familiarity with using a computer and web browsers
+- Recommended: Some understanding of JavaScript, Node.js, and Git
+- A domain name (for linking to your Vercel deployment)
 
 ## Setting Up Your Development Environment
 
@@ -90,7 +93,7 @@ Before you begin, you'll need:
 
 7. Add your private GitHub repository as the remote:
    ```
-   git remote add origin https://github.com/your-username/your-private-repo.git
+   git remote add origin https://github.com/your-username/my-resume-website.git
    ```
 
 8. Stage all files:
@@ -202,17 +205,24 @@ INSERT INTO contact_info (type, value, label) VALUES
 ('linkedin', 'https://www.linkedin.com/in/example', 'LinkedIn');
 ```
 
-5. Click "Run" to execute the SQL and create the tables and policies
+5. Click "Run" to execute the SQL and create the tables and policies. You should see a success message indicating that the queries were executed successfully.
 
-6. Go to Authentication > Settings in your Supabase dashboard and set up the authentication providers you want to use (e.g., Email, Google, GitHub)
+6. Set up authentication:
+   - Go to Authentication → Providers in your Supabase dashboard
+   - Enable Email/Password authentication
+   - If you want to add Google or GitHub authentication:
+     - For Google: Go to the Google Cloud Console, create a new project, enable the Google+ API, and create OAuth 2.0 credentials. Add these credentials to Supabase.
+     - For GitHub: Go to GitHub Developer Settings, create a new OAuth App, and add the client ID and secret to Supabase.
 
 ## Setting Up Your Local Environment
 
-1. In your Supabase project settings, find your project URL and anon key
+1. In your Supabase project settings, find your project URL and anon key:
+   - Go to Settings → API in your Supabase dashboard
+   - You'll find the Project URL and anon public API key here
 
 2. Open your project in VS Code:
    - Open VS Code
-   - Go to File > Open Folder
+   - Go to File → Open Folder
    - Select your `my-resume-website` folder
 
 3. Create a new file named `.env.local` in the root directory of your project
@@ -226,7 +236,7 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
 
 ## Customizing Your Personal Information
 
-1. Open the file `src/app/page.tsx` in your project
+1. Open the file `src/app/page.tsx` in your project (located in the `my-resume-website/src/app` directory)
 
 2. Find the `currentContent` object (around line 70):
 
@@ -246,9 +256,11 @@ const currentContent = {
 
 3. Update the following properties:
    - `title`: Change "John Doe" to your name
-   - `subtitle`: Change "Example Expertise" to your profession
+   - `subtitle`: Change "Sales Professional" to your profession
    - `characteristicsList`: Update both the Dutch and English versions with your personal characteristics
    - `languagesList`: Update both the Dutch and English versions with the languages you speak
+
+   Note: Some values like `content.intro?.[language]` are dynamically retrieved from the Supabase database based on the selected language. You can modify these values directly in the Supabase database, which will be reflected on the site.
 
 4. Save the file
 
@@ -268,7 +280,7 @@ export const metadata = {
 ## Testing Your Website Locally
 
 1. Open a terminal in VS Code:
-   - Go to Terminal > New Terminal
+   - Go to Terminal → New Terminal
 
 2. Install dependencies:
    ```
@@ -280,11 +292,11 @@ export const metadata = {
    npm run dev
    ```
 
-4. Open a web browser and go to `http://localhost:3000`
+4. Open a web browser and go to [http://localhost:3000](http://localhost:3000)
 
 5. You should see your resume website with your updated information
 
-6. To test the admin panel, go to `http://localhost:3000/admin` and log in using the authentication method you set up in Supabase
+6. To test the admin panel, go to [http://localhost:3000/admin](http://localhost:3000/admin) and log in using the authentication method you set up in Supabase. If you're using Email/Password authentication, you'll need to create an account first using the sign-up option.
 
 ## Pushing Your Code to GitHub
 
@@ -311,7 +323,7 @@ export const metadata = {
 
 3. Choose "Import Git Repository"
 
-4. Select your private GitHub repository
+4. Select your private GitHub repository (`my-resume-website`)
 
 5. Configure the project:
    - Framework Preset: Next.js
@@ -320,19 +332,46 @@ export const metadata = {
    - Output Directory: .next
 
 6. Add environment variables:
-   - NEXT_PUBLIC_SUPABASE_URL
-   - NEXT_PUBLIC_SUPABASE_ANON_KEY
-   (Use the values from your Supabase project)
+   - Go to Settings → Environment Variables in your Vercel project
+   - Add the following variables:
+     - NEXT_PUBLIC_SUPABASE_URL
+     - NEXT_PUBLIC_SUPABASE_ANON_KEY
+   (Use the values from your Supabase project, found under Settings → API)
 
 7. Click "Deploy"
 
 Vercel will now deploy your site and provide you with a URL. It will automatically redeploy whenever you push changes to your GitHub repository.
 
+## Linking Your Vercel Deployment to Your Domain
+
+1. Purchase a domain name from a domain registrar (e.g., GoDaddy, Namecheap, Google Domains)
+
+2. In your Vercel dashboard, go to your project settings
+
+3. Click on the "Domains" tab
+
+4. Enter your domain name in the "Add Domain" field and click "Add"
+
+5. Vercel will provide you with DNS records to add to your domain registrar:
+   - Usually, this involves adding an A record pointing to Vercel's IP address
+   - You might also need to add a CNAME record for the www subdomain
+
+6. Go to your domain registrar's DNS settings and add the records provided by Vercel
+
+7. Wait for the DNS changes to propagate (this can take up to 48 hours, but often happens much faster)
+
+8. Once Vercel confirms your domain is correctly set up, your website will be accessible at your custom domain
+
+Your resume website is now publicly accessible at your custom domain without requiring users to sign in to Vercel.
+
 ## Further Customizing Your Website
 
 1. Edit content through the admin panel:
-   - Go to your website's `/admin` route (e.g., `https://your-website.vercel.app/admin`)
-   - Log in and use the interface to update content
+   - Go to your website's `/admin` route (e.g., `https://your-domain.com/admin`)
+   - Log in using the authentication method you set up in Supabase
+   - Use the interface to update content
+
+   The admin panel is connected to your Supabase database. Changes made here will update the corresponding tables in Supabase, which are then reflected on the frontend.
 
 2. Modify the design:
    - Open `src/app/page.tsx` in VS Code
@@ -341,6 +380,9 @@ Vercel will now deploy your site and provide you with a URL. It will automatical
 3. Add new features:
    - Create new components in the `src/components` directory
    - Update `src/app/page.tsx` to include these new components
+
+4. Extend functionality:
+   - Refer to the [Supabase API documentation](https://supabase.io/docs/guides/api) to learn how to add new content types or manage roles and permissions
 
 ## Changing Your Profile Picture
 
@@ -369,45 +411,88 @@ Vercel will now deploy your site and provide you with a URL. It will automatical
    />
    ```
 
-4. Save the changes, commit, and push to GitHub. Vercel will automatically redeploy your site.
+4. Save the changes, commit, and push to GitHub:
+   ```
+   git add .
+   git commit -m "Updated profile picture"
+   git push origin main
+   ```
+
+5. Vercel will automatically redeploy your site with the new image.
 
 ## Troubleshooting
 
 If you encounter issues:
 
 1. Check your `.env.local` file and Vercel environment variables:
-   - Ensure NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY are correct
+   - Ensure NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY are correct and match your Supabase project settings
 
 2. Verify Supabase connection:
    - Open your Supabase project
-   - Go to Settings > API
-   - Confirm the Project URL and anon public API key match your `.env.local`
+   - Go to Settings → API
+   - Confirm the Project URL and anon public API key match your `.env.local` and Vercel environment variables
 
 3. Check Vercel deployment:
    - Go to your Vercel dashboard
    - Select your project
    - Go to Deployments
    - Check the most recent deployment for any error messages
+   - You can use the `vercel logs` command in your terminal to view deployment logs
 
-4. Review Vercel environment variables:
-   - In your Vercel project settings, ensure NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY are set correctly
+4. Clear your browser cache or try in an incognito window
 
-5. Clear your browser cache or try in an incognito window
+5. If you're having issues with your custom domain:
+   - Double-check the DNS settings at your domain registrar
+   - Ensure the records match exactly what Vercel provided
+   - Use a tool like [whatsmydns.net](https://www.whatsmydns.net/) to check if your DNS changes have propagated
 
-6. Check the console in your browser's developer tools for any error messages
+6. For local development issues:
+   - Ensure all dependencies are installed: `npm install`
+   - Try deleting the `.next` folder and rebuilding: `rm -rf .next && npm run build`
+
+7. If you're experiencing database-related issues:
+   - Check your Supabase dashboard for any error messages or warnings
+   - Ensure your IP address isn't blocked if you've set up IP restrictions
+   - Verify that your RLS policies are correctly set up
+
+8. For authentication problems:
+   - Confirm that you've properly set up the authentication providers in Supabase
+   - Check that your OAuth credentials (if using Google or GitHub) are correct
 
 If problems persist, you may need to:
 
-1. Delete the `.next` folder in your project directory and rebuild
-2. Ensure all dependencies are correctly installed by running `npm install` again
-3. Check for any conflicting browser extensions that might interfere with your site
+1. Review the error messages in your browser's console (F12 to open developer tools)
+2. Check the server-side logs in your Vercel deployment
+3. Consult the documentation for [Next.js](https://nextjs.org/docs), [React](https://reactjs.org/docs), and [Supabase](https://supabase.io/docs)
 
-For more detailed troubleshooting, refer to the documentation for Next.js, React, and Supabase.
+## Maintaining Your Website
+
+1. Regularly update your content:
+   - Use the admin panel to keep your resume information current
+   - Add new experiences or skills as you acquire them
+
+2. Keep your dependencies up-to-date:
+   - Periodically run `npm update` to update your project dependencies
+   - Be aware of major version changes that might require code updates
+
+3. Monitor your Vercel and Supabase usage:
+   - Keep an eye on your usage limits, especially if you're on free tiers
+   - Upgrade your plans if necessary as your needs grow
+
+4. Backup your data:
+   - Regularly export your Supabase database as a backup
+   - Keep your GitHub repository up-to-date as an additional backup of your code
+
+5. Stay informed about security updates:
+   - Keep an eye on security announcements for Next.js, React, and Supabase
+   - Apply security patches promptly
 
 ## Conclusion
 
-Congratulations! You now have a fully functional, customizable resume website. Remember to keep your Supabase and Vercel credentials secure, and never commit them to your GitHub repository.
+Congratulations! You now have a fully functional, customizable resume website deployed to your own domain. This setup allows you to easily update your professional information and share it with potential employers or clients.
 
-For further customization and advanced features, refer to the documentation for [Next.js](https://nextjs.org/docs), [React](https://reactjs.org/docs), and [Supabase](https://supabase.io/docs).
+Remember to keep your Supabase and Vercel credentials secure, and never commit sensitive information to your GitHub repository. Regularly update your site to reflect your growing skills and experiences.
 
-Happy coding and good luck with your job search!
+As you become more comfortable with the technologies used in this project, consider adding more features or customizing the design further to make your resume stand out.
+
+Good luck with your professional endeavors!
